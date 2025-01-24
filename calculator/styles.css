@@ -1,0 +1,427 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Orbitron', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, 
+        #999999 0%,
+        #666666 20%,
+        #333333 40%,
+        #1a1a1a 60%,
+        #000000 80%
+    );
+    background-size: 200% 200%;
+    animation: gradientMove 15s ease infinite;
+    overflow: hidden;
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: -50% -50%;
+    }
+    50% {
+        background-position: 150% 150%;
+    }
+    100% {
+        background-position: -50% -50%;
+    }
+}
+
+/* 添加多层网格效果 */
+body::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 20px 20px,
+        linear-gradient(0deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 20px 20px,
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px) 0 0 / 100px 100px,
+        linear-gradient(0deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px) 0 0 / 100px 100px;
+    animation: gridMove 20s linear infinite;
+    opacity: 0.5;
+}
+
+/* 添加扫描线效果 */
+body::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    animation: scanline 3s linear infinite;
+    z-index: 0;
+    filter: blur(1px);
+}
+
+/* 添加光晕效果 */
+.glow-effect {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle at 50% 50%,
+        rgba(255, 255, 255, 0.05) 0%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes scanline {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
+
+@keyframes gridMove {
+    0% {
+        transform: translate(0, 0);
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(20px, 20px);
+        opacity: 0.5;
+    }
+}
+
+.calculator {
+    position: relative;
+    background: rgba(10, 20, 30, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: 2px solid rgba(0, 255, 255, 0.1);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.2),
+                inset 0 0 30px rgba(0, 255, 255, 0.1);
+    padding: 25px;
+    width: 380px;
+    z-index: 1;
+    animation: calculatorGlow 8s ease-in-out infinite;
+}
+
+@keyframes calculatorGlow {
+    0%, 100% {
+        border-color: rgba(0, 255, 255, 0.2);
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.2),
+                    inset 0 0 30px rgba(0, 255, 255, 0.1);
+    }
+    33% {
+        border-color: rgba(255, 0, 255, 0.2);
+        box-shadow: 0 0 30px rgba(255, 0, 255, 0.2),
+                    inset 0 0 30px rgba(255, 0, 255, 0.1);
+    }
+    66% {
+        border-color: rgba(0, 255, 166, 0.2);
+        box-shadow: 0 0 30px rgba(0, 255, 166, 0.2),
+                    inset 0 0 30px rgba(0, 255, 166, 0.1);
+    }
+}
+
+/* 修改显示屏样式 */
+.display {
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    position: relative;
+    overflow: hidden;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* 减小间距从10px到5px */
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    animation: displayGlow 8s ease-in-out infinite;
+}
+
+/* 修改前一个操作数样式 */
+.previous-operand {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 2.5rem;
+    text-align: right;
+    flex: 0 1 auto; /* 修改flex属性，不再占据所有剩余空间 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 修改当前操作数样式 */
+.current-operand {
+    color: #ff0000;
+    font-size: 2.5rem;
+    text-align: right;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    animation: displayNumberGlow 8s ease-in-out infinite;
+    flex: 0 1 auto; /* 修改flex属性，不再占据所有剩余空间 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 当有运算符时的样式 */
+.display.has-operator {
+    justify-content: flex-end; /* 改为右对齐 */
+    padding-right: 30px; /* 增加右侧内边距 */
+}
+
+/* 当没有运算符时隐藏前一个操作数 */
+.display:not(.has-operator) .previous-operand {
+    display: none;
+}
+
+@keyframes displayGlow {
+    0%, 100% {
+        border-color: rgba(255, 0, 0, 0.2);
+        box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.1);
+    }
+    50% {
+        border-color: rgba(0, 102, 255, 0.2);
+        box-shadow: inset 0 0 20px rgba(0, 102, 255, 0.1);
+    }
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+button {
+    border: none;
+    padding: 20px;
+    font-size: 1.3rem;
+    border-radius: 10px;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    position: relative;
+    overflow: hidden;
+    animation: buttonGlow 8s ease-in-out infinite;
+}
+
+@keyframes buttonGlow {
+    0%, 100% {
+        color: #ff0000;
+        text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        border-color: rgba(255, 0, 0, 0.2);
+        background: rgba(0, 0, 0, 0.8);
+    }
+    50% {
+        color: #0066ff;
+        text-shadow: 0 0 5px rgba(0, 102, 255, 0.5);
+        border-color: rgba(0, 102, 255, 0.2);
+        background: rgba(0, 0, 0, 0.8);
+    }
+}
+
+/* 修改按钮悬停效果 */
+button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
+}
+
+button:hover {
+    background: rgba(0, 0, 0, 0.9);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* 修改数字按钮样式 */
+.number {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* 修改运算符按钮样式 */
+.operator {
+    background: rgba(0, 0, 0, 0.8);
+    font-weight: bold;
+    animation: operatorGlow 8s ease-in-out infinite;
+}
+
+@keyframes operatorGlow {
+    0%, 100% {
+        color: #ff0000;
+        text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    }
+    50% {
+        color: #0066ff;
+        text-shadow: 0 0 5px rgba(0, 102, 255, 0.5);
+    }
+}
+
+/* 修改特殊按钮样式 */
+.special {
+    background: rgba(0, 0, 0, 0.9);
+    color: #ff0000;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    animation: specialGlow 8s ease-in-out infinite;
+}
+
+@keyframes specialGlow {
+    0%, 100% {
+        color: #ff0000;
+        text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        border-color: rgba(255, 0, 0, 0.2);
+    }
+    50% {
+        color: #0066ff;
+        text-shadow: 0 0 5px rgba(0, 102, 255, 0.5);
+        border-color: rgba(0, 102, 255, 0.2);
+    }
+}
+
+/* 修改等号按钮样式 */
+.equals {
+    background: rgba(0, 0, 0, 0.9);
+    color: #0066ff;
+    text-shadow: 0 0 5px rgba(0, 102, 255, 0.5);
+}
+
+.zero {
+    grid-column: span 2;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+/* 添加计算器边框发光效果 */
+@keyframes borderGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+    }
+}
+
+.calculator {
+    animation: borderGlow 3s ease-in-out infinite;
+}
+
+/* 添加容器样式 */
+.container {
+    display: flex;
+    gap: 30px;
+    max-width: 800px;
+    margin: 0 auto;
+    z-index: 1;
+}
+
+/* 添加历史记录样式 */
+.history {
+    background: rgba(10, 20, 30, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: 2px solid rgba(255, 0, 0, 0.1);
+    padding: 25px;
+    width: 300px;
+    color: #fff;
+    animation: historyGlow 8s ease-in-out infinite;
+}
+
+.history h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ff0000;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    animation: displayNumberGlow 8s ease-in-out infinite;
+}
+
+.history-list {
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.history-item {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.history-item:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: translateX(5px);
+}
+
+.history-expression {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.history-result {
+    color: #ff0000;
+    font-size: 1.2rem;
+    text-align: right;
+    animation: displayNumberGlow 8s ease-in-out infinite;
+}
+
+/* 自定义滚动条样式 */
+.history-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.history-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 0, 0, 0.3);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 0, 0, 0.5);
+}
+
+@keyframes historyGlow {
+    0%, 100% {
+        border-color: rgba(255, 0, 0, 0.2);
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.1);
+    }
+    50% {
+        border-color: rgba(0, 102, 255, 0.2);
+        box-shadow: 0 0 30px rgba(0, 102, 255, 0.1);
+    }
+} 
